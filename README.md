@@ -2,7 +2,7 @@
 
 This project is a smart webhook processor designed to work with [Jellyfin](https://jellyfin.org/) and [Streamyfin](https://github.com/streamyfin/streamyfin) with the [Companion plugin](https://github.com/streamyfin/jellyfin-plugin-streamyfin). It allows you to filter, group, and forward notifications from Jellyfin to Streamyfin, making your notification flow more relevant and user-friendly.
 
-## What does it do?
+## Features
 
 - **Receives notifications** from Jellyfin (or any compatible webhook source).
 - **Buffers notifications** for a configurable period to avoid spamming Streamyfin.
@@ -19,15 +19,32 @@ This processor is ideal for users who want to:
 
 ## How to use
 
-### 1. Clone and build the project
+### 1. Install and configure [jellyfin-plugin-streamyfin](https://github.com/streamyfin/jellyfin-plugin-streamyfin/tree/main)
+
+Install the webhook plugin and the jellyfin-plugin-streamyfin on your Jellyfin instance.
+Follow the tutorial on the [Github repository](https://github.com/streamyfin/jellyfin-plugin-streamyfin/blob/main/NOTIFICATIONS.md)
+
+### 2. Create a new or copy the following in your docker-compose.yml
 
 ```bash
-git clone <your-repo-url>
-cd webhook-process
-docker compose build
+services:
+  jellyfin_webhook_processor:
+    image: wassax7/jellyfin-webhook-processor-streamyfin:latest
+    container_name: jellyfin_webhook_processor
+    environment:
+      - WEBHOOK_URL=https://mydomain.com//Streamyfin/notification
+      - HEADER_AUTHORIZATION=MediaBrowser Token=""
+      - THRESHOLD=5
+      - BUFFER_TIME=20
+      - SIMILARITY_PREFIX=New episode
+      - CUSTOM_BODY_TEMPLATE=New episodes of Season {season} available for {title}
+      - SEASON_KEYWORD=Season
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
 ```
 
-### 2. Configure environment variables
+### 3. Configure environment variables
 
 Edit the `docker-compose.yml` file to set the following variables:
 
@@ -56,7 +73,8 @@ Example:
 docker compose up -d
 ```
 
-The service will listen on port 8000 by default. Configure Jellyfin to send webhooks to `http://<your-server>:8000/`.
+The service will listen on port 8000 by default.
+Configure Jellyfin to send webhooks to `http(s)://<your-server>:8000/`.
 
 ## How it works
 
