@@ -1,4 +1,4 @@
-# Jellyfin Webhook Processor for Streamyfin
+# Streamyfin grouped Webhook Processor
 
 This project is a smart webhook processor designed to work with [Jellyfin](https://jellyfin.org/) and [Streamyfin](https://github.com/streamyfin/streamyfin) with the [Companion plugin](https://github.com/streamyfin/jellyfin-plugin-streamyfin). It allows you to filter, group, and forward notifications from Jellyfin to Streamyfin, making your notification flow more relevant and user-friendly.
 
@@ -28,9 +28,9 @@ Follow the tutorial on the [Github repository](https://github.com/streamyfin/jel
 
 ```bash
 services:
-  jellyfin_webhook_processor:
-    image: wassax7/jellyfin-webhook-processor-streamyfin:latest
-    container_name: jellyfin_webhook_processor
+  streamyfin_grouped_webhook:
+    image: wassax7/streamyfin-grouped-webhook:latest
+    container_name: streamyfin_grouped_webhook
     environment:
       - WEBHOOK_URL=https://mydomain.com//Streamyfin/notification
       - HEADER_AUTHORIZATION=MediaBrowser Token=""
