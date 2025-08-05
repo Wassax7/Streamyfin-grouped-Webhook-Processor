@@ -1,0 +1,15 @@
+services:
+  jellyfin_webhook_processor:
+    image: wassax7/jellyfin-webhook-processor-streamyfin:latest
+    container_name: jellyfin_webhook_processor_streamyfin
+    environment:
+      - WEBHOOK_URL=https://mydomain.com//Streamyfin/notification
+      - HEADER_AUTHORIZATION=MediaBrowser Token=""
+      - THRESHOLD=5
+      - BUFFER_TIME=20
+      - SIMILARITY_PREFIX=New episode
+      - CUSTOM_BODY_TEMPLATE=New episodes of Season {season} available for {title}
+      - SEASON_KEYWORD=Season
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
