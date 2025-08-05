@@ -24,21 +24,49 @@ This processor is ideal for users who want to:
 Install the webhook plugin and the jellyfin-plugin-streamyfin on your Jellyfin instance.
 Follow the tutorial on the [Github repository](https://github.com/streamyfin/jellyfin-plugin-streamyfin/blob/main/NOTIFICATIONS.md)
 
+Webhook Template Example
+
+```json
+[
+    {
+        {{#if_equals ItemType 'Movie'}}
+          "title": "New movie available !",
+          "body": "{{{Name}}}"
+        {{/if_equals}}
+
+        {{#if_equals ItemType 'Season'}}
+          "title": "{{{SeriesName}}}",
+          "body": "New season {{SeasonNumber00}} available !"
+        {{else}}
+             {{#if_equals ItemType 'Episode'}}
+                "title": "{{{SeriesName}}}",
+                "body": "New episode {{EpisodeNumber00}} season {{SeasonNumber00}} available !"
+            {{/if_equals}}
+        {{/if_equals}}
+
+       {{#if_equals ItemType 'Series'}}
+          "title": "New TV Show available !",
+          "body": "{{{SeriesName}}}"
+        {{/if_equals}}
+    }
+]
+```
+
 ### 2. Create a new or copy the following in your docker-compose.yml
 
-```bash
+```yaml
 services:
   streamyfin_grouped_webhook:
     image: wassax7/streamyfin-grouped-webhook:latest
     container_name: streamyfin_grouped_webhook
     environment:
-      - WEBHOOK_URL=https://mydomain.com//Streamyfin/notification
-      - HEADER_AUTHORIZATION=MediaBrowser Token=""
-      - THRESHOLD=5
-      - BUFFER_TIME=20
-      - SIMILARITY_PREFIX=New episode
-      - CUSTOM_BODY_TEMPLATE=New episodes of Season {season} available for {title}
-      - SEASON_KEYWORD=Season
+      - WEBHOOK_URL=https://mydomain.com//Streamyfin/notification # Endpoint of your Streamyfin plugin
+      - HEADER_AUTHORIZATION=MediaBrowser Token="" # Token of your Jellyfin Instance
+      - THRESHOLD=5 # After 5 notifications, notifications will be grouped
+      - BUFFER_TIME=20 # Send the grouped notification ater 20 seconds
+      - SIMILARITY_PREFIX=New episode # Corresponding to the beggining of the body in your Webhook template
+      - CUSTOM_BODY_TEMPLATE=New episodes of Season {season} available for {title} # {title} will retrieve the title key of your json and {season} will search the number after your SEASON_KEYWORD
+      - SEASON_KEYWORD=season # Corresponding to the keyword in the body of your Webhook template
     ports:
       - "8000:8000"
     restart: unless-stopped
