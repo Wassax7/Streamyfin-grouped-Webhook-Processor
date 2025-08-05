@@ -1,7 +1,10 @@
 services:
-  jellyfin_webhook_processor:
-    image: wassax7/jellyfin-webhook-processor-streamyfin:latest
-    container_name: jellyfin_webhook_processor_streamyfin
+  streamyfin_grouped_webhook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wassax7/streamyfin-grouped-webhook:latest
+    container_name: streamyfin_grouped_webhook
     environment:
       - WEBHOOK_URL=https://mydomain.com//Streamyfin/notification
       - HEADER_AUTHORIZATION=MediaBrowser Token=""
